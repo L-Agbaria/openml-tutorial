@@ -91,7 +91,7 @@ Additional information is available through properties such as the dataset's fea
 When loading data through `sklearn.datasets.fetch_openml()`, the returned object is a dictionary and thus the metadeta is accessible through `dataset.details`.
 
 ### Publishing datasets
-Publishing a dataset is different from simply downloading one. Uploading content to OpenML requires authentication with an API key, and the dataset needs to be published before it can be used within a normal OpenML framework.
+Publishing a dataset is different from simply downloading one. Uploading content to OpenML requires authentication with an API key, and the dataset needs to be published before it can be used within a normal OpenML framework, this could include waiting for the dataset to be verified automatically by the server.
 
 A new dataset can be constructed locally, populated with metadata and data, and then published to OpenML. The exact upload workflow is demonstrated in the examples notebook.
 
@@ -99,6 +99,9 @@ When publishing a dataset, pay particular attention to its metadata. A useful de
 Published datasets can also be forked, allowing users to create their own version of an existing dataset. Datasets could also be modified by their owners, however if they are being used by a task then those changes can be limited.
 
 If you would like to delete a dataset you own, then you must first detach it from all tasks.
+
+### Data Qualities
+Once a dataset is published, the server will assess the uploaded dataset and generate data quality measures. Examples of these quality measures are MajorityClassSize, AutoCorrelation, and ClassEntropy, with the full list being shown on the [openml website](https://www.openml.org/search?type=measure&measure_type=data_quality).
 
 ## Tasks
 OpenML tasks are standardized combinations of datasets and machine-learning objectives, such as supervised classification. Each task contains a dataset as well as the data splits which could be used during experimental runs, together with information regarding task type, estimation procedure, and estimation measure.
@@ -113,9 +116,17 @@ The features and target data can be directly obtained using the method `get_X_an
 ### Data splits
 As different task types require different amounts of repeats, folds, and samples, you can use the method `get_split_dimensions()` to know these values for a loaded task. This infomration can then be used in the method `get_train_test_split_indices()` to determine which exact indices to be used, setting up for reproducible runs.
 
-The associated examples notebook shows how this can be used directly, and will be developed to include examples of creating, publishing, editing, and deleting tasks (which requires it to have no associated runs or studies).
+### Creating tasks
+Similarly to datasets, new tasks must be published before use.
+A new task can be created using a server verified dataset, assuming that no other tasks with the same estimation procedure exists for that dataset. The examples notebook demonstrates the creation of a new supervised classification task with 10-fold Crossvalidation on an example dataset in test server configuration, other estimation procedures can be found on the [OpenML website](https://www.openml.org/search?type=measure&measure_type=estimation_procedure) by selecting the \"Show overview\" option on the top-right.
 
 ## Flows and runs
+By selecting a task and defining a machine learning flow that follows the scikit-learn pipeline, it is possible to run and evaluate the performance on the given task. Examples of how to create a flow using scikit-learn models and then running them locally are shown in the accompanying examples notebook, first presenting how to manually create and train the model followed by generating the flow and populating the run results, and then second by directly providing a scikit-learn model and using `openml.runs.run_model_on_task` to obtain the run and flow directly and easily.
+
+Additionally, once a flow is published on a server, a corresponding run would be generated to ensure a clear and computationally fair result for comparisons.
+
+### Evaluations
+Once the runs and their evaluations are published to the server, it is possible to load and filter evaluations to visualize the performances of different flows. 
 
 ## Studies
 
